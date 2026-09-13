@@ -1,0 +1,522 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   1. DESIGN TOKENS & COLOR PALETTE SYSTEM
+   ========================================================================== */
+:root {
+  /* Exact Foundation Palette */
+  --pv-white: #ffffff;
+  --pv-charcoal: #242424;
+  --pv-muted-blue-gray: #5c7c89;
+  --pv-deep-teal: #1f4959;
+  --pv-deep-navy: #071e2d;
+
+  /* Color Hierarchy Mapping */
+  --primary: var(--pv-deep-teal);
+  --primary-hover: #173845;
+  --primary-active: #102731;
+  --primary-subtle: rgba(31, 73, 89, 0.08);
+
+  --secondary: var(--pv-muted-blue-gray);
+  --secondary-hover: #4a6672;
+  --secondary-active: #3a515b;
+  --secondary-subtle: rgba(92, 124, 137, 0.12);
+
+  --dark: var(--pv-charcoal);
+  --deep-dark: var(--pv-deep-navy);
+
+  /* Surface & Background Setup */
+  --background: #f4f7f8;
+  --surface: var(--pv-white);
+  --surface-elevated: #ffffff;
+  --surface-dark: var(--pv-deep-navy);
+
+  /* Borders & Separation */
+  --border: #e1e8eb;
+  --border-strong: var(--pv-muted-blue-gray);
+  --border-dark-subtle: rgba(255, 255, 255, 0.12);
+
+  /* Text Colors */
+  --text-primary: var(--pv-charcoal);
+  --text-secondary: var(--pv-muted-blue-gray);
+  --text-muted: #8397a1;
+  --text-on-dark: #ffffff;
+  --text-on-primary: #ffffff;
+
+  /* Restrained Semantic States */
+  --success: #2e7d32;
+  --success-bg: #edf7ed;
+  --success-border: #a5d6a7;
+
+  --warning: #ed6c02;
+  --warning-bg: #fff4e5;
+  --warning-border: #ffcc80;
+
+  --danger: #d32f2f;
+  --danger-bg: #fdeded;
+  --danger-border: #ef9a9a;
+
+  --info: #0288d1;
+  --info-bg: #e5f6fd;
+  --info-border: #81d4fa;
+
+  /* Focus & Focus Ring */
+  --focus-ring: rgba(31, 73, 89, 0.35);
+
+  /* Radii */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-md: 0.5rem;   /* 8px */
+  --radius-lg: 0.75rem;  /* 12px */
+  --radius-xl: 1rem;     /* 16px */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(7, 30, 45, 0.05);
+  --shadow-md: 0 4px 8px -1px rgba(7, 30, 45, 0.08), 0 2px 4px -1px rgba(7, 30, 45, 0.04);
+  --shadow-lg: 0 12px 20px -4px rgba(7, 30, 45, 0.1), 0 4px 6px -2px rgba(7, 30, 45, 0.05);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   2. BASE RESETS & TYPOGRAPHY
+   ========================================================================== */
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--border);
+  }
+
+  html {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-primary);
+    background-color: var(--background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--text-primary);
+    background-color: var(--background);
+    line-height: 1.5;
+  }
+
+  /* Selection Highlight */
+  ::selection {
+    background-color: var(--pv-muted-blue-gray);
+    color: var(--pv-white);
+  }
+
+  /* Editorial Headings */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.25rem; }
+  h4 { font-size: 1.125rem; }
+
+  @media (min-width: 768px) {
+    h1 { font-size: 2.75rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.5rem; }
+  }
+
+  p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--primary-hover);
+  }
+
+  /* Accessible Focus Rings */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--pv-muted-blue-gray);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pv-deep-teal);
+  }
+}
+
+/* ==========================================================================
+   3. REUSABLE UI COMPONENTS
+   ========================================================================== */
+@layer components {
+  /* Editorial Style Heading Utility */
+  .font-serif-heading {
+    font-family: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  /* --- Buttons --- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding: 0.5rem 1.125rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background-color: var(--pv-deep-teal);
+    color: var(--pv-white);
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+  .btn-primary:active {
+    background-color: var(--primary-active);
+  }
+
+  .btn-secondary {
+    background-color: var(--pv-deep-navy);
+    color: var(--pv-white);
+  }
+  .btn-secondary:hover {
+    background-color: #0c2a3e;
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border-color: var(--pv-muted-blue-gray);
+    color: var(--pv-charcoal);
+  }
+  .btn-outline:hover {
+    background-color: var(--secondary-subtle);
+    border-color: var(--pv-deep-teal);
+    color: var(--pv-deep-teal);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--text-secondary);
+  }
+  .btn-ghost:hover {
+    background-color: var(--secondary-subtle);
+    color: var(--pv-charcoal);
+  }
+
+  .btn-danger {
+    background-color: var(--danger);
+    color: var(--pv-white);
+  }
+  .btn-danger:hover {
+    background-color: #b71c1c;
+  }
+
+  .btn:disabled, .btn.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+  }
+
+  /* --- Form Inputs --- */
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--text-primary);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .input::placeholder, .textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .input:hover, .select:hover, .textarea:hover {
+    border-color: var(--border-strong);
+  }
+
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--pv-deep-teal);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+
+  .input:disabled, .select:disabled, .textarea:disabled {
+    background-color: var(--background);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.375rem;
+  }
+
+  /* --- Cards & Structural Blocks --- */
+  .pv-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  }
+
+  .pv-card-interactive {
+    cursor: pointer;
+  }
+
+  .pv-card-interactive:hover {
+    border-color: var(--pv-muted-blue-gray);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* High-Contrast Dark Card / Hero Blocks */
+  .pv-card-dark, .pv-hero-dark {
+    background-color: var(--pv-deep-navy);
+    color: var(--pv-white);
+    border: 1px solid var(--border-dark-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pv-card-dark p, .pv-hero-dark p {
+    color: #a0b2bd;
+  }
+
+  .pv-card-teal {
+    background-color: var(--pv-deep-teal);
+    color: var(--pv-white);
+    border-radius: var(--radius-md);
+  }
+
+  .pv-panel {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* --- Navigation --- */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .nav-item:hover {
+    color: var(--pv-charcoal);
+    background-color: var(--secondary-subtle);
+  }
+
+  .nav-item.active {
+    color: var(--pv-deep-teal);
+    background-color: var(--primary-subtle);
+    font-weight: 600;
+  }
+
+  /* Sidebar styling for dark sidebar variants */
+  .sidebar-dark .nav-item {
+    color: #a0b2bd;
+  }
+
+  .sidebar-dark .nav-item:hover {
+    color: var(--pv-white);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebar-dark .nav-item.active {
+    color: var(--pv-white);
+    background-color: var(--pv-deep-teal);
+  }
+
+  /* --- Badges & Status Indicators --- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    border: 1px solid transparent;
+  }
+
+  .badge-success {
+    background-color: var(--success-bg);
+    color: var(--success);
+    border-color: var(--success-border);
+  }
+
+  .badge-warning {
+    background-color: var(--warning-bg);
+    color: var(--warning);
+    border-color: var(--warning-border);
+  }
+
+  .badge-danger {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger-border);
+  }
+
+  .badge-info {
+    background-color: var(--info-bg);
+    color: var(--info);
+    border-color: var(--info-border);
+  }
+
+  .badge-neutral {
+    background-color: var(--background);
+    color: var(--text-secondary);
+    border-color: var(--border);
+  }
+
+  /* --- Logo Utility Classes --- */
+  .pv-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--pv-deep-navy);
+    letter-spacing: -0.02em;
+  }
+
+  .pv-logo-icon {
+    color: var(--pv-deep-teal);
+  }
+
+  .pv-logo-sm { font-size: 1rem; }
+  .pv-logo-md { font-size: 1.25rem; }
+  .pv-logo-lg { font-size: 1.75rem; }
+
+  /* --- File Management UI Dropzone --- */
+  .file-dropzone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--surface);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .file-dropzone:hover, .file-dropzone.drag-active {
+    border-color: var(--pv-deep-teal);
+    background-color: var(--primary-subtle);
+  }
+
+  /* --- AI Chat Bubbles --- */
+  .chat-bubble-user {
+    background-color: var(--pv-deep-teal);
+    color: var(--pv-white);
+    border-radius: var(--radius-md) var(--radius-md) 0 var(--radius-md);
+    padding: 0.75rem 1rem;
+  }
+
+  .chat-bubble-ai {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 0;
+    padding: 0.75rem 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* ==========================================================================
+   4. UTILITIES & ANIMATIONS
+   ========================================================================== */
+@layer utilities {
+  /* Direct Palette Background Utilities */
+  .bg-pv-white { background-color: var(--pv-white); }
+  .bg-pv-charcoal { background-color: var(--pv-charcoal); }
+  .bg-pv-muted-blue-gray { background-color: var(--pv-muted-blue-gray); }
+  .bg-pv-deep-teal { background-color: var(--pv-deep-teal); }
+  .bg-pv-deep-navy { background-color: var(--pv-deep-navy); }
+
+  /* Direct Palette Text Utilities */
+  .text-pv-white { color: var(--pv-white); }
+  .text-pv-charcoal { color: var(--pv-charcoal); }
+  .text-pv-muted-blue-gray { color: var(--pv-muted-blue-gray); }
+  .text-pv-deep-teal { color: var(--pv-deep-teal); }
+  .text-pv-deep-navy { color: var(--pv-deep-navy); }
+
+  /* Skeleton Shimmer Loading */
+  @keyframes skeleton-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #edf2f7 25%, #e1e8eb 50%, #edf2f7 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ==========================================================================
+   5. ACCESSIBILITY & REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
