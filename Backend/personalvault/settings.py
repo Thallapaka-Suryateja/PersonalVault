@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.search',
     'apps.chat',
     'apps.vault_collections',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 # Custom User model

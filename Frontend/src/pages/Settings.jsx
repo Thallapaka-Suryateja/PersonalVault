@@ -18,6 +18,10 @@ function Settings() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
   const navItems = [
     {
       label: 'Dashboard',
@@ -109,10 +113,36 @@ function Settings() {
     fetchSettingsData()
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    navigate('/')
+  const handleLogout = async () => {
+    try {
+      await api.post('/accounts/logout/', {
+        refresh: localStorage.getItem('refresh_token'),
+      })
+    } catch {
+      // proceed regardless
+    } finally {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      navigate('/')
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true)
+    setDeleteError('')
+
+    try {
+      await api.delete('/accounts/me/')
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      navigate('/')
+    } catch (err) {
+      setDeleteError(
+        err.response?.data?.detail ||
+          'Failed to delete account. Please try again.'
+      )
+      setDeleteLoading(false)
+    }
   }
 
   const formatFileSize = (bytes) => {
@@ -287,6 +317,52 @@ function Settings() {
 
   return (
     <div className="min-h-screen bg-[#f7f9fa] text-[#242424]">
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[#242424]">
+              Delete your account
+            </h3>
+
+            <p className="mt-2 text-sm text-[#5C7C89]">
+              This will permanently delete your account and all your data —
+              files, bookmarks, collections, tags, and search history. This
+              cannot be undone.
+            </p>
+
+            {deleteError && (
+              <div className="mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-sm text-red-600">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="mt-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteModal(false)
+                  setDeleteError('')
+                }}
+                disabled={deleteLoading}
+                className="flex-1 rounded-xl border border-[#dbe2e5] py-2.5 text-sm font-medium text-[#5C7C89] transition hover:bg-[#f7f9fa] disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={deleteLoading}
+                className="flex-1 rounded-xl bg-red-500 py-2.5 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-50"
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete account'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sidebar */}
       <aside
@@ -714,120 +790,6 @@ function Settings() {
 
             </section>
 
-            {/* Security - Phase 2 */}
-            <section className="rounded-xl border border-[#dbe2e5] bg-white p-6 shadow-sm">
-
-              <div className="flex items-start justify-between gap-4">
-
-                <div>
-                  <h2 className="text-lg font-semibold text-[#242424]">
-                    Security
-                  </h2>
-
-                  <p className="mt-1 text-sm text-[#5C7C89]">
-                    Manage your account security.
-                  </p>
-                </div>
-
-                <span className="rounded-lg bg-[#eef3f4] px-3 py-1.5 text-xs font-medium text-[#1F4959]">
-                  Coming Soon
-                </span>
-
-              </div>
-
-              <div className="mt-5 rounded-xl bg-[#f7f9fa] p-5">
-
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-medium text-[#242424]">
-                      Change Password
-                    </p>
-
-                    <p className="mt-1 text-sm text-[#5C7C89]">
-                      Update your PersonalVault password.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled
-                    className="rounded-lg border border-[#dbe2e5] px-4 py-2 text-sm font-medium text-[#5C7C89] opacity-60"
-                  >
-                    Change
-                  </button>
-                </div>
-
-              </div>
-
-            </section>
-
-            {/* AI Preferences - Phase 2 */}
-            <section className="rounded-xl border border-[#dbe2e5] bg-white p-6 shadow-sm">
-
-              <div className="flex items-start justify-between gap-4">
-
-                <div>
-                  <h2 className="text-lg font-semibold text-[#242424]">
-                    AI Preferences
-                  </h2>
-
-                  <p className="mt-1 text-sm text-[#5C7C89]">
-                    Control how PersonalVault AI interacts with your documents.
-                  </p>
-                </div>
-
-                <span className="rounded-lg bg-[#eef3f4] px-3 py-1.5 text-xs font-medium text-[#1F4959]">
-                  Coming Soon
-                </span>
-
-              </div>
-
-              <div className="mt-5 space-y-3">
-
-                <div className="flex items-center justify-between gap-4 rounded-xl bg-[#f7f9fa] p-5">
-                  <div>
-                    <p className="font-medium text-[#242424]">
-                      Document-grounded answers
-                    </p>
-
-                    <p className="mt-1 text-sm text-[#5C7C89]">
-                      Answer questions using your uploaded documents.
-                    </p>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked
-                    disabled
-                    className="h-5 w-5 opacity-60"
-                    readOnly
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-4 rounded-xl bg-[#f7f9fa] p-5">
-                  <div>
-                    <p className="font-medium text-[#242424]">
-                      Semantic document retrieval
-                    </p>
-
-                    <p className="mt-1 text-sm text-[#5C7C89]">
-                      Use relevant document sections when answering.
-                    </p>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked
-                    disabled
-                    className="h-5 w-5 opacity-60"
-                    readOnly
-                  />
-                </div>
-
-              </div>
-
-            </section>
-
             {/* Account */}
             <section className="rounded-xl border border-red-100 bg-white p-6 shadow-sm">
 
@@ -853,17 +815,13 @@ function Settings() {
 
                 <button
                   type="button"
-                  disabled
-                  className="rounded-xl border border-red-200 px-5 py-3 text-sm font-medium text-red-500 opacity-50"
+                  onClick={() => setShowDeleteModal(true)}
+                  className="rounded-xl border border-red-200 px-5 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
                 >
                   Delete Account
                 </button>
 
               </div>
-
-              <p className="mt-4 text-xs text-[#8a9ba2]">
-                Account deletion will be available in a future update.
-              </p>
 
             </section>
 
